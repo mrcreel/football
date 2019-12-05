@@ -16,7 +16,7 @@ async function asyncForEach(array, callback) {
 }
 
 const pages = [
-  // ["/Teams/index.htm", true],
+  ["/Teams/index.htm", true],
   ["/Teams/Inactive.htm", false],
 ]
 
@@ -28,73 +28,88 @@ const scrapeData = async pages => {
 
     let $ = cheerio.load(fs.readFileSync(url))
 
+    /*
     const ele = $("td[width=152] a")
     const $ele = $(ele[0])
     const teamId = $ele.attr("href").split(".")[0]
+    const teamName = $ele.text()
+    */
 
     // Get teamIds
-    /*
+
     $("td[width=152] a").each((idx, ele) => {
       const $ele = $(ele)
       const teamId = $ele.attr("href").split(".")[0]
-*/
-    const seasonsUrl = `${BASE_URL}/Teams/${teamId}_Standings.htm`
-    const teamSeasons = []
+      const teamName = $ele.text()
 
-    $ = scrapePage($, seasonsUrl)
+      const seasonsUrl = `${BASE_URL}/Teams/${teamId}_Standings.htm`
+      const teamSeasons = []
 
-    $("td[width=76]").each((idx, ele) => {
-      const $ele = $(ele)
-      const teamYear = parseInt($ele.text())
-      if (!isNaN(teamYear)) {
-        const teamDivision = $ele
-          .next()
-          .text()
-          .replace(/(\r\n|\n|\r) /gm, "")
+      $ = scrapePage($, seasonsUrl)
 
-        const splitDivision = teamDivision
-          .split("-")
-          .join(",")
-          .split(" ")
-          .join(",")
-          .split(",")
+      $("td[width=76]").each((idx, ele) => {
+        const $ele = $(ele)
+        const teamYear = parseInt($ele.text())
+        if (!isNaN(teamYear)) {
+          const teamDivision = $ele
+            .next()
+            .text()
+            .replace(/(\r\n|\n|\r) /gm, "")
 
-        const teamClass =
-          splitDivision.length >= 2 ? splitDivision[1] : splitDivision[0]
+          const splitDivision = teamDivision
+            .split("-")
+            .join(",")
+            .split(" ")
+            .join(",")
+            .split(",")
 
-        teamSeason = {
-          teamYear,
-          teamDivision,
-          teamClass,
+          const teamClass =
+            splitDivision.length >= 2 ? splitDivision[1] : splitDivision[0]
+
+          teamSeason = {
+            teamYear,
+            teamDivision,
+            teamClass,
+          }
+          teamSeasons.push(teamSeason)
         }
-        teamSeasons.push(teamSeason)
+      })
+
+      dataPoint = {
+        teamId,
+        teamName,
+        inState: true,
+        active: page[1],
+        teamSeasons,
       }
+
+      const scheduleUrl = `${BASE_URL}/Teams/${teamId}_Scores.htm`
+      // console.log(scheduleUrl)
+
+      $ = scrapePage($, scheduleUrl)
+      const pageRows = $("tr").slice(6, $("tr").length - 3)
+      const $pageRows = $(pageRows)
+
+      console.log($pageRows.length)
+
+      data.push(dataPoint)
     })
-
-    dataPoint = {
-      teamId,
-      inState: true,
-      active: page[1],
-    }
-    // console.log(dataPoint)
-    // console.log(teamSeasons)
-
-    const scheduleUrl = `${BASE_URL}/Teams/${teamId}_Scores.htm`
-    // console.log(scheduleUrl)
-
-    $ = scrapePage($, scheduleUrl)
-    const pageRows = $("tr").slice(6, $("tr").length - 3)
-    const $pageRows = $(pageRows)
-
-    console.log($pageRows.length)
-
-    data.push(dataPoint)
-    //    })
   })
 
   data.sort((a, b) => (a.teamId > b.teamId ? 1 : -1))
 
   // console.log(data)
+
+  // https://medium.com/@osiolabs/read-write-json-files-with-node-js-92d03cc82824
+  const jsonData = JSON.stringify(data)
+  console.log(jsonData)
+  fs.writeFile("./data/stats.json", jsonData, err => {
+    if (err) {
+      console.log("Error writing file", err)
+    } else {
+      console.log("Successfully wrote file")
+    }
+  })
 }
 
 scrapeData(pages)
