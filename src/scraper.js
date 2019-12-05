@@ -68,20 +68,14 @@ const scrapeData = async pages => {
 
           teamSeason = {
             teamYear,
+            teamName: "",
+            teamMascot: "",
             teamDivision,
             teamClass,
           }
           teamSeasons.push(teamSeason)
         }
       })
-
-      dataPoint = {
-        teamId,
-        teamName,
-        inState: true,
-        active: page[1],
-        teamSeasons,
-      }
 
       const scheduleUrl = `${BASE_URL}/Teams/${teamId}_Scores.htm`
       // console.log(scheduleUrl)
@@ -90,7 +84,85 @@ const scrapeData = async pages => {
       const pageRows = $("tr").slice(6, $("tr").length - 3)
       const $pageRows = $(pageRows)
 
-      console.log($pageRows.length)
+      const numSeasons = $pageRows.length / 5
+
+      // console.log(teamSeasons)
+
+      for (let r = 0; r < $pageRows.length; r++) {
+        $pageRows[r] = $($pageRows[r])
+          .children()
+          .slice(1, $($pageRows[r]).length - 2)
+      }
+
+      const gamesData = []
+      for (let r = 0; r < $pageRows.length; r++) {
+        const row = $pageRows[r]
+        const rowArray = []
+        for (let e = 0; e < row.length; e++) {
+          const element = $(row[e]).text()
+          rowArray.push(element)
+        }
+        gamesData.push(rowArray)
+      }
+
+      /*
+      for (let secSeasonNum = 0; secSeasonNum < 4; secSeasonNum++) {
+        const teamSeasonYear = parseInt(gamesData[0][secSeasonNum])
+        console.log(
+          `Season ${secSeasonNum}: ${teamSeasonYear} -> gamesData[0][${secSeasonNum}]`
+        )
+      }
+      */
+
+      let ct = 0
+      for (let sec = 0; sec < numSeasons / 4; sec++) {
+        for (let secSeasonNum = 0; secSeasonNum < 4; secSeasonNum++) {
+          const teamSeasonYear = parseInt(gamesData[sec * 20][secSeasonNum])
+          if (!isNaN(teamSeasonYear)) {
+            const teamSeasonName = gamesData[sec * 20 + 1][
+              secSeasonNum
+            ].replace(/(\r\n|\n|\r) /gm, "")
+            if (teamSeasonName.length !== 1) {
+              const teamGameSeason = {
+                teamSeasonId: ct,
+                teamSeasonYear,
+                teamSeasonName,
+                teamSeasonMascot: gamesData[sec * 20 + 2][secSeasonNum].replace(
+                  /(\r\n|\n|\r) /gm,
+                  ""
+                ),
+              }
+              // console.log(teamGameSeason)
+              teamSeasons[ct]["teamName"] = teamGameSeason["teamSeasonName"]
+              teamSeasons[ct]["teamMascot"] = teamGameSeason["teamSeasonMascot"]
+
+              console.log(teamSeasons[ct])
+
+              ct++
+            }
+          }
+        }
+      }
+      console.log(`${teamId}: teamSeasons : ${teamSeasons.length}`)
+
+      /*
+      for (let secSeasonNum = 0; secSeasonNum < 4; secSeasonNum++) {
+        const teamSeasonYear = parseInt(gamesData[20][secSeasonNum])
+        console.log(
+          `Season ${secSeasonNum}: ${teamSeasonYear} -> gamesData[20][${secSeasonNum}]`
+        )
+      }
+      */
+
+      console.log("---------")
+
+      dataPoint = {
+        teamId,
+        teamName,
+        inState: true,
+        active: page[1],
+        teamSeasons,
+      }
 
       data.push(dataPoint)
     })
@@ -101,6 +173,7 @@ const scrapeData = async pages => {
   // console.log(data)
 
   // https://medium.com/@osiolabs/read-write-json-files-with-node-js-92d03cc82824
+
   const jsonData = JSON.stringify(data)
   console.log(jsonData)
   fs.writeFile("./data/stats.json", jsonData, err => {

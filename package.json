@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "scraper": "nodemon ./src/scraper.json",
+    "scraper": "nodemon ./src/scraper.js",
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
@@ -17,7 +17,8 @@
   "dependencies": {
     "gatsby": "^2.18.4",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",
