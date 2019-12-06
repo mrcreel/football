@@ -2,6 +2,8 @@
 
 ## Description
 
+https://raw.githubusercontent.com/fivethirtyeight/nfl-elo-game/master/data/nfl_games.csv
+
 Project to scrape [Mississippi High School Football
 Past and Present](http://misshsfootball.com/) website
 
