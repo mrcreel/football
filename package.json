@@ -1,11 +1,12 @@
 {
-  "name": "gatsby-starter-hello-world",
+  "name": "msrepfb",
   "private": true,
   "description": "A simplified bare-bones starter for Gatsby",
-  "version": "0.1.0",
+  "version": "0.3.0",
+  "author": "Michael R Creel",
   "license": "MIT",
   "scripts": {
-    "scraper": "nodemon ./src/scraper.json",
+    "scraper": "nodemon ./src/server/index.js",
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
@@ -15,7 +16,11 @@
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "gatsby": "^2.18.4",
+    "helmet": "^3.21.2",
+    "morgan": "^1.9.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   },
