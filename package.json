@@ -24,7 +24,8 @@
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",
     "nodemon": "^2.0.1",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "uuid": "^3.3.3"
   },
   "repository": {
     "type": "git",
