@@ -1,23 +1,42 @@
-const express = require('express')
+const fetch = require('node-fetch')
+const cheerio = require('cheerio')
 
-const morgan = require('morgan')
-const cors = require('cors')
-const helmet = require('helmet')
+const teamSeasonData = []
 
-const app = express()
+const getTeamScores = async teamId => {
+  const url = `http://misshsfootball.com/Teams/${teamId}_Scores.htm`
+  const response = await fetch(url)
+  const body = await response.text()
 
-app.use(morgan('combined'))
-app.use(helmet())
-app.use(cors())
+  const $ = cheerio.load(body)
 
-app.get('/', (req, res) => {
-  res.json({
-    message: 'get / route',
-  })
-})
+  let teamScoresPageRows = $('tr')
+  teamScoresPageRows = teamScoresPageRows.slice(
+    6,
+    teamScoresPageRows.length - 3
+  )
+  const teamScoresPageElements = []
 
-const PORT = process.env.PORT || 1337
+  for (let row = 0; row < teamScoresPageRows.length; row++) {
+    let rowElements = []
+    $(teamScoresPageRows[row])
+      .children()
+      .each((idx, td) => {
+        rowElements.push($(td).text())
+      })
+    rowElements = rowElements.slice(1, rowElements.length - 1)
+    teamScoresPageElements.push(rowElements)
+  }
 
-app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`))
+  for (let r = 0; r < 4; r++) {
+    teamSeasonData.push({
+      teamId,
+      teamSeason: teamScoresPageElements[0][r],
+      teamName: teamScoresPageElements[1][r].replace(/(\r\n|\n|\r) /gm, ''),
+      teamMasot: teamScoresPageElements[2][r].replace(/(\r\n|\n|\r) /gm, ''),
+    })
+  }
+  console.log(teamSeasonData)
+}
 
-console.log('app')
+getTeamScores('Westharrison')
