@@ -27,7 +27,7 @@ const getTeams = async pageUrl => {
     $('td[width=152] a').each((idx, ele) => {
       const $ele = $(ele)
       const teamId = $ele.attr('href').split('.')[0]
-      const teamName = $ele.text()
+      const teamName = $ele.text().replace(/(\r\n|\n|\r) /gm, '')
 
       const teamDocument = {
         _id: teamId,
@@ -42,7 +42,7 @@ const getTeams = async pageUrl => {
         console.log(err)
       }
       */
-    const teamId = 'Stone'
+    const teamId = 'Taylorsville'
     const scoresPage = `${teamId}_Scores.htm`
 
     const scoresUrl = `${BASE_URL}${scoresPage}`
@@ -79,16 +79,109 @@ const getTeams = async pageUrl => {
       const rowNum = sec * 19
       for (let yr = 0; yr < pageRowElements[rowNum].length; yr++) {
         const teamSeason = parseInt(pageRowElements[rowNum][0 + yr][0])
-        const teamName = pageRowElements[rowNum + 1][0 + yr][0]
-        const teamMascot = pageRowElements[rowNum + 2][0 + yr][0]
-        const teamYear = {
-          sec,
-          rowNum,
-          teamSeason,
-          teamName,
-          teamMascot
+        const teamName = pageRowElements[rowNum + 1][0 + yr][0].replace(
+          /(\r\n|\n|\r) /gm,
+          ''
+        )
+        const teamMascot = pageRowElements[rowNum + 2][0 + yr][0].replace(
+          /(\r\n|\n|\r) /gm,
+          ''
+        )
+        if (teamName.length != 1) {
+          const teamYear = {
+            sec,
+            rowNum,
+            teamSeason,
+            teamName,
+            teamMascot
+          }
+          // console.log(teamYear)
+
+          const tm1Id = teamId
+          const tm1Name = teamName
+          const gameSeason = teamSeason
+          console.log('----------')
+          console.log(`---${gameSeason}---`)
+          console.log('----------')
+          console.log(`-> ${teamName} Schedule`)
+          for (let wk = 1; wk <= 16; wk++) {
+            let team1Id = tm1Id
+            let team2Id = ''
+            const tm1Score = parseInt(
+              pageRowElements[rowNum + 2 + wk][5 + yr * 7][0]
+            )
+            let team1Score = tm1Score
+            if (!isNaN(tm1Score)) {
+              const tm2Name = pageRowElements[rowNum + 2 + wk][
+                2 + yr * 7
+              ][0].replace(/(\r\n|\n|\r) /gm, '')
+              const neutralGame =
+                pageRowElements[rowNum + 2 + wk][1 + yr * 7][0] == 'N'
+              let tm1Loc = pageRowElements[rowNum + 2 + wk][1 + yr * 7][0]
+              let gameLoc = tm1Loc
+              let tm2Id = ''
+              let tm2Score = parseInt(
+                pageRowElements[rowNum + 2 + wk][6 + yr * 7][0]
+              )
+              const divisionGame =
+                pageRowElements[rowNum + 2 + wk][3 + yr * 7][0] == '*'
+
+              console.log(
+                `Week: ${wk} -> ${tm1Name}[${tm1Score}] ${gameLoc} vs ${tm2Name}[${tm2Score}]`
+              )
+
+              if (tm1Loc == 'A') {
+                gameLoc = 'H'
+                team1Id = tm2Id
+                team1Name = tm2Name
+                team1Score = tm2Score
+                team2Score = tm1Score
+                team2Id = tm1Id
+                team2Name = tm1Name
+
+                console.log('SWITCH')
+                console.log(
+                  `Week: ${wk} -> ${team1Name}[${team1Score}] ${gameLoc} vs ${team2Name}[${team2Score}]`
+                )
+              }
+              if (tm1Loc == 'N' && tm1Name > tm2Name) {
+                team1Id = tm2Id
+                team1Name = tm2Name
+                team1Score = tm2Score
+                team2Score = tm1Score
+                team2Id = tm1Id
+                team2Name = tm1Name
+
+                console.log('SWITCH')
+                console.log(
+                  `Week: ${wk} -> ${team1Name}[${team1Score}] ${gameLoc} vs ${team2Name}[${team2Score}]`
+                )
+              }
+              const gameData = {
+                // sec,
+                // row: rowNum + 2,
+                // elem: 0 + yr * 7,
+                gameDate: pageRowElements[rowNum + 2 + wk][0 + yr * 7][0],
+                gameSeason,
+                gameWeek: wk,
+                neutralGame,
+                playoffGame: wk >= 12 && !divisionGame,
+                tm1Loc,
+                tm1Id,
+                tm1Name,
+                tm2Id,
+                tm2Name,
+                divisionGame,
+                tm1Result: pageRowElements[rowNum + 2 + wk][4 + yr * 7][0],
+                tm1Score,
+                tm2Score
+              }
+
+              console.log('=============')
+              // console.log(gameData)
+            }
+          }
         }
-        console.log(teamYear)
       }
     }
     // console.log(pageRowElements)
