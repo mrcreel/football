@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "app": "nodemon scraper.js"
+    "app": "nodemon scraper.js",
+    "main": "nodemon main.js"
   },
   "keywords": [],
   "author": "Michael R Creel",
