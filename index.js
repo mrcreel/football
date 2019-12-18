@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const axios = require('axios')
 
 const cheerio = require('cheerio')
@@ -30,18 +32,55 @@ const scrapeTeams = async page => {
     const teamId = $(element)
       .attr('href')
       .split('.')[0]
-    // console.log({ index, teamId, teamName, inState: true })
-    pageData.push({ index, teamId, teamName, inState: true })
+    pageData.push({ teamId, teamName, inState: true })
   })
 
   return await pageData
 }
 
-const saveTeams = async () => {
-  const uri =
-    'mongodb+srv://admin:admin@cluster0-4yyve.mongodb.net/test?retryWrites=true&w=majority'
+const saveActiveTeams = async () => {
+  const client = new MongoClient(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
 
-  const client = new MongoClient(uri, {
+  try {
+    // Connect to the MongoDB cluster
+    await client.connect()
+    // Make the appropriate DB calls
+
+    console.log('Connected...')
+
+    const pageData = await scrapeTeams(
+      'http://misshsfootball.com/Teams/index.htm'
+    )
+
+    const newTeam = pageData[0]
+    console.log(newTeam)
+
+    /** TODO: Save to MongoDB */
+    const dbCollection = 'teams'
+
+    // console.log(client.db('football').collection('teams'))
+    const result = await client
+      .db('football')
+      .collection('teams')
+      .insertMany(pageData)
+
+    console.log(
+      `${result.insertedCount} new teams(s) created with the following id(s):`
+    )
+    console.log(result.insertedIds)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    await client.close()
+    console.log('Disconnected')
+  }
+}
+
+const saveInactiveTeams = async () => {
+  const client = new MongoClient(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
@@ -57,11 +96,22 @@ const saveTeams = async () => {
       'http://misshsfootball.com/Teams/Inactive.htm'
     )
 
-    console.log(pageData)
-
-    const collection = 'teams'
+    const newTeam = pageData[0]
+    console.log(newTeam)
 
     /** TODO: Save to MongoDB */
+    const dbCollection = 'teams'
+
+    // console.log(client.db('football').collection('teams'))
+    const result = await client
+      .db('football')
+      .collection('teams')
+      .insertMany(pageData)
+
+    console.log(
+      `${result.insertedCount} new teams(s) created with the following id(s):`
+    )
+    console.log(result.insertedIds)
   } catch (e) {
     console.error(e)
   } finally {
@@ -70,7 +120,56 @@ const saveTeams = async () => {
   }
 }
 
-saveTeams()
+const saveTeams = async page => {
+  const client = new MongoClient(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+
+  try {
+    // Connect to the MongoDB cluster
+    await client.connect()
+    // Make the appropriate DB calls
+
+    console.log('Connected...')
+
+    const pageData = await scrapeTeams(page)
+
+    const newTeam = pageData[0]
+    console.log(newTeam)
+
+    /** TODO: Save to MongoDB */
+    const dbCollection = 'teams'
+
+    // console.log(client.db('football').collection('teams'))
+    const result = await client
+      .db('football')
+      .collection('teams')
+      .insertMany(pageData)
+
+    console.log(
+      `${result.insertedCount} new teams(s) created with the following id(s):`
+    )
+    console.log(result.insertedIds)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    await client.close()
+    console.log('Disconnected')
+  }
+}
+
+// saveActiveTeams()
+// saveInactiveTeams()
+const pages = [
+  'http://misshsfootball.com/Teams/index.htm',
+  'http://misshsfootball.com/Teams/Inactive.htm'
+]
+
+pages.forEach(async page => {
+  await saveTeams(page)
+})
+// saveTeams(page)
 // scrapeTeams('http://misshsfootball.com/Teams/index.htm')
 // scrapeTeams('http://misshsfootball.com/Teams/Inactive.htm')
 // loadPage('http://misshsfootball.com/Teams/Aberdeen_Standings.htm', 'tr')
