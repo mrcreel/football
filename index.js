@@ -38,88 +38,6 @@ const scrapeTeams = async page => {
   return await pageData
 }
 
-const saveActiveTeams = async () => {
-  const client = new MongoClient(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-
-  try {
-    // Connect to the MongoDB cluster
-    await client.connect()
-    // Make the appropriate DB calls
-
-    console.log('Connected...')
-
-    const pageData = await scrapeTeams(
-      'http://misshsfootball.com/Teams/index.htm'
-    )
-
-    const newTeam = pageData[0]
-    console.log(newTeam)
-
-    /** TODO: Save to MongoDB */
-    const dbCollection = 'teams'
-
-    // console.log(client.db('football').collection('teams'))
-    const result = await client
-      .db('football')
-      .collection('teams')
-      .insertMany(pageData)
-
-    console.log(
-      `${result.insertedCount} new teams(s) created with the following id(s):`
-    )
-    console.log(result.insertedIds)
-  } catch (e) {
-    console.error(e)
-  } finally {
-    await client.close()
-    console.log('Disconnected')
-  }
-}
-
-const saveInactiveTeams = async () => {
-  const client = new MongoClient(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-
-  try {
-    // Connect to the MongoDB cluster
-    await client.connect()
-    // Make the appropriate DB calls
-
-    console.log('Connected...')
-
-    const pageData = await scrapeTeams(
-      'http://misshsfootball.com/Teams/Inactive.htm'
-    )
-
-    const newTeam = pageData[0]
-    console.log(newTeam)
-
-    /** TODO: Save to MongoDB */
-    const dbCollection = 'teams'
-
-    // console.log(client.db('football').collection('teams'))
-    const result = await client
-      .db('football')
-      .collection('teams')
-      .insertMany(pageData)
-
-    console.log(
-      `${result.insertedCount} new teams(s) created with the following id(s):`
-    )
-    console.log(result.insertedIds)
-  } catch (e) {
-    console.error(e)
-  } finally {
-    await client.close()
-    console.log('Disconnected')
-  }
-}
-
 const saveTeams = async page => {
   const client = new MongoClient(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -135,13 +53,14 @@ const saveTeams = async page => {
 
     const pageData = await scrapeTeams(page)
 
-    const newTeam = pageData[0]
-    console.log(newTeam)
-
-    /** TODO: Save to MongoDB */
     const dbCollection = 'teams'
 
-    // console.log(client.db('football').collection('teams'))
+    client
+      .db('football')
+      .collection('teams')
+      .createIndex({ teamId: 1 }, { unique: true })
+
+    /** TODO: Throw a readable actual error if a dupe is tried to be inserted*/
     const result = await client
       .db('football')
       .collection('teams')
@@ -161,6 +80,10 @@ const saveTeams = async page => {
 
 // saveActiveTeams()
 // saveInactiveTeams()
+
+const teamIndex = async () => {
+  db.myColl.createIndex({ category: 1 })
+}
 const pages = [
   'http://misshsfootball.com/Teams/index.htm',
   'http://misshsfootball.com/Teams/Inactive.htm'
