@@ -1,20 +1,13 @@
 const { MongoClient } = require('mongodb')
 const axios = require('axios')
-const cheerio = require('cheerio')
 
-function cleanText(string) {
+// const cheerio = require('cheerio')
+
+const parseTeams = require('./parseTeams')
+
+/* function cleanText(string) {
   return string.replace(/(\r\n|\n|\r) /gm, '')
-}
-
-const listCollections = async client => {
-  console.log('- Collections:')
-  await client
-    .db('football')
-    .listCollections()
-    .forEach(collection => {
-      console.log(collection.name)
-    })
-}
+} */
 
 const main = async () => {
   /**
@@ -33,19 +26,23 @@ const main = async () => {
     // Connect to the MongoDB cluster
     await client.connect()
     // Make the appropriate DB calls
-    // await listCollections(client)
+
     console.log('Connected...')
-    // Load index page with Axios
-    const url = 'http://misshsfootball.com/Teams/Aberdeen_Standings.htm'
-    console.log(`getData from ${url}`)
+    parseTeams()
 
-    const response = await axios.get(url)
-    const body = await response.data
+    // const url = 'http://misshsfootball.com/Teams/index.htm'
+    // const url = 'http://misshsfootball.com/Teams/Inactive.htm'
+    // const url = 'http://misshsfootball.com/Teams/Aberdeen_Standings.htm'
+    // const url = 'http://misshsfootball.com/Teams/Aberdeen_Scores.htm'
 
-    const $ = cheerio.load(body)
+    // const pageData = await scrapePage(url)
 
-    const $tr = $('tr')
+    // const $ = cheerio.load(pageData)
 
+    // pageData.forEach(row => {
+    //   console.log(row.length)
+    // })
+    /*
     const pageData = []
     $tr.each((i, row) => {
       const rowData = []
@@ -63,6 +60,7 @@ const main = async () => {
     })
     console.log(pageData)
     console.log('Length:', pageData.length)
+    */
   } catch (e) {
     console.error(e)
   } finally {

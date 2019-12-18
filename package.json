@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "app": "nodemon scraper.js",
-    "main": "nodemon main.js"
+    "main": "nodemon main.js",
+    "teams": "nodemon parseTeams.js",
+    "index": "nodemon index.js"
   },
   "keywords": [],
   "author": "Michael R Creel",
