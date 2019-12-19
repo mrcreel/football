@@ -125,6 +125,7 @@ const closeClient = async () => {
   return await client.close()
 }
 
+/*
 const readTeams = async () => {
   try {
     // Connect to the MongoDB cluster
@@ -142,6 +143,41 @@ const readTeams = async () => {
       }
 
       const $data = await scrapeStandings(teamData)
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
+*/
+
+const readTeams = async () => {
+  try {
+    // Connect to the MongoDB cluster
+    await client.connect()
+
+    const result = await client
+      .db('football')
+      .collection('teams')
+      .find()
+
+    result.forEach(async function(doc) {
+      const teamData = {
+        docId: doc._id,
+        teamId: doc.teamId
+      }
+
+      const teamId = teamData.teamId
+      const page = `http://misshsfootball.com/Teams/${teamId}_Standings.htm`
+
+      const data = await loadPage(page, 'tr')
+      const $ = await cheerio.load(data)
+      let $data = $(data)
+
+      $data = $data.slice(8, $data.length - 5)
+
+      const pageData = []
+
+      console.log(`${teamId}-> ${page}: ${$data.length}`)
     })
   } catch (e) {
     console.error(e)
