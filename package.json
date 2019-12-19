@@ -6,8 +6,7 @@
   "scripts": {
     "app": "nodemon scraper.js",
     "main": "nodemon main.js",
-    "teams": "nodemon parseTeams.js",
-    "activeTeams": "nodemon activeTeams.js",
+    "teams": "nodemon inactiveTeams.js",
     "index": "nodemon index.js"
   },
   "keywords": [],
