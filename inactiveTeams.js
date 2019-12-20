@@ -31,7 +31,6 @@ const inactiveTeams = async () => {
       .split('.')[0]
     const teamName = cleanText($(item).text())
     const team = {
-      idx,
       teamId,
       teamName,
       inState: true

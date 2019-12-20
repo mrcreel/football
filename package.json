@@ -7,6 +7,7 @@
     "app": "nodemon scraper.js",
     "main": "nodemon main.js",
     "teams": "nodemon inactiveTeams.js",
+    "seasons": "nodemon seasons.js",
     "index": "nodemon index.js"
   },
   "keywords": [],
