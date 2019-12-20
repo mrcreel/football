@@ -20,36 +20,51 @@ const games = async () => {
 
   try {
     // Connect to the MongoDB cluster
-    await client.connect()
-
-    /* Read all inState teams in db
-    const result = await client
-      .db('football')
-      .collection('teams')
-      .find({ inState: true })
-    */
-
-    // Read one team for testing
+    await client.connect(console.log('Connected...'))
 
     const result = await client
       .db('football')
       .collection('teams')
       .find({ inState: true, teamId: 'Greenecounty' })
 
-    let ct = 1
     result.forEach(async doc => {
-      const teamId = doc.teamId
-      const page = `${ct}) http://misshsfootball.com/Teams/${teamId}_Scores.htm`
-
-      console.log(`${page}`)
+      const teamId = await doc.teamId
+      const page = `http://misshsfootball.com/Teams/${teamId}_Scores.htm`
 
       const response = await axios.get(page)
-      ct++
+      const body = await response.data
+
+      const $ = await cheerio.load(body)
+      const data = $(`tr`)
+
+      const $data = $(data).slice(6, $(data).length - 3)
+
+      console.log(page)
+      console.log(`${teamId}: ${$data.length} rows`)
+
+      const sections = $data.length / 20
+      console.log(sections)
+      let ct = 1
+      const pageData = []
+      $data.each(async (index, element) => {
+        pageData.push($(element).children())
+        ct++
+      })
+      for (let sec = 0; sec < sections; sec++) {
+        for (let yr = 0; yr < 4; yr++) {
+          const teamMascot = cleanText($(pageData[sec * 20 + 2][yr + 1]).text())
+          if (teamMascot.length > 1) {
+            const teamName = cleanText($(pageData[sec * 20 + 1][yr + 1]).text())
+            const teamSeason = parseInt($(pageData[sec * 20][yr + 1]).text())
+            console.log(`${teamSeason}: ${teamName} ${teamMascot}`)
+          }
+        }
+      }
     })
   } catch (err) {
     console.log(error)
   } finally {
-    await client.close()
+    await client.close(console.log('Disconnected'))
   }
 }
 
