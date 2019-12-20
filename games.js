@@ -9,8 +9,6 @@ function cleanText(string) {
 }
 
 const games = async () => {
-  console.log('games.js')
-
   /** Read teams collection on mongoDB */
 
   const client = new MongoClient(process.env.MONGO_URI, {
@@ -19,13 +17,13 @@ const games = async () => {
   })
 
   try {
-    // Connect to the MongoDB cluster
-    await client.connect(console.log('Connected...'))
+    await client.connect()
 
+    // Connect to the MongoDB cluster
     const result = await client
       .db('football')
       .collection('teams')
-      .find({ inState: true, teamId: 'Greenecounty' })
+      .find({ inState: true })
 
     result.forEach(async doc => {
       const teamId = await doc.teamId
@@ -39,16 +37,12 @@ const games = async () => {
 
       const $data = $(data).slice(6, $(data).length - 3)
 
-      console.log(page)
-      console.log(`${teamId}: ${$data.length} rows`)
+      console.log(`${teamId}: ${($data.length / 20) * 4} seasons`)
 
       const sections = $data.length / 20
-      console.log(sections)
-      let ct = 1
       const pageData = []
       $data.each(async (index, element) => {
         pageData.push($(element).children())
-        ct++
       })
       for (let sec = 0; sec < sections; sec++) {
         for (let yr = 0; yr < 4; yr++) {
@@ -56,15 +50,25 @@ const games = async () => {
           if (teamMascot.length > 1) {
             const teamName = cleanText($(pageData[sec * 20 + 1][yr + 1]).text())
             const teamSeason = parseInt($(pageData[sec * 20][yr + 1]).text())
-            console.log(`${teamSeason}: ${teamName} ${teamMascot}`)
+            console.log(`${teamId}->${teamSeason}: ${teamName} ${teamMascot}`)
+
+            // TODO: Update seasons collection with this info
+
+            const tmSeasons = client
+              .db('football')
+              .collection('seasons')
+              .updateOne(
+                { teamId: teamId, teamSeason: teamSeason },
+                { $set: { teamName: teamName, teamMascot: teamMascot } }
+              )
           }
         }
       }
     })
-  } catch (err) {
+  } catch (error) {
     console.log(error)
   } finally {
-    await client.close(console.log('Disconnected'))
+    // await client.close(console.log('Disconnected'))
   }
 }
 
