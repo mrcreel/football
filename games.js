@@ -23,7 +23,7 @@ const games = async () => {
     const result = await client
       .db('football')
       .collection('teams')
-      .find({ inState: true, teamId: 'Alcorncentral' })
+      .find({ inState: true }) //, teamId: 'Ashland' })
 
     result.forEach(async doc => {
       const teamId = await doc.teamId
@@ -52,12 +52,15 @@ const games = async () => {
             const teamName = cleanText($(pageData[sec * 20 + 1][yr + 1]).text())
             const teamSeason = parseInt($(pageData[sec * 20][yr + 1]).text())
 
-            // console.log(`-> ${teamSeason}`)
             for (let wk = 1; wk <= 16; wk++) {
-              const tm2Name = cleanText(
-                $(pageData[sec * 20 + 3 + wk][yr * 7 + 3]).text()
+              const tm2Score = parseInt(
+                $(pageData[sec * 20 + 3 + wk][yr * 7 + 7]).text()
               )
-              if (tm2Name.length > 1) {
+
+              if (!isNaN(tm2Score)) {
+                const tm2Name = cleanText(
+                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 3]).text()
+                )
                 const gameDate = new Date(
                   $(pageData[sec * 20 + 3 + wk][yr * 7 + 1]).text()
                 ).toDateString()
@@ -67,14 +70,12 @@ const games = async () => {
                 const tm1Score = parseInt(
                   $(pageData[sec * 20 + 3 + wk][yr * 7 + 6]).text()
                 )
-                const tm2Score = parseInt(
-                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 7]).text()
-                )
 
                 const gameInfo = {
                   gameSeason: teamSeason,
                   gameDate,
                   gameWeek: wk,
+                  gameNeutral: gmLoc == 'N',
                   gameLocation: gmLoc == 'A' ? 'H' : gmLoc,
                   divisionGame,
                   playoffGame: !divisionGame && wk > 11,
@@ -90,8 +91,12 @@ const games = async () => {
                 }
 
                 console.log(gameInfo)
+                // TODO: Save to mongoDb
+                client
+                  .db('football')
+                  .collection('games')
+                  .insertOne(gameInfo)
               }
-              // console.log(`-> -> Week: ${wk}: ${gameDate} | ${gmLoc}`)
             }
 
             // Update seasons collection with this info
