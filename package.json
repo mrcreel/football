@@ -4,12 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "app": "nodemon scraper.js",
-    "games": "nodemon games.js",
-    "main": "nodemon main.js",
-    "teams": "nodemon inactiveTeams.js",
-    "seasons": "nodemon seasons.js",
-    "index": "nodemon index.js"
+    "games": "nodemon ./scrapers/games.js",
+    "inactive": "nodemon ./scrapers/inactiveTeams.js",
+    "seasons": "nodemon ./scrapers/seasons.js",
+    "active": "nodemon ./scrapers/activeTeams"
   },
   "keywords": [],
   "author": "Michael R Creel",
