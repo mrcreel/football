@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "games": "nodemon ./scrapers/games.js",
+    "updateGames": "nodemon updateGames.js",
     "inactive": "nodemon ./scrapers/inactiveTeams.js",
     "seasons": "nodemon ./scrapers/seasons.js",
     "active": "nodemon ./scrapers/activeTeams"
