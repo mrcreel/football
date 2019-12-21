@@ -1,7 +1,7 @@
 {
   "name": "football",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.2.0",
+  "description": "Site to display data from misshsfootball.com in a more user-friendly way",
   "main": "app.js",
   "scripts": {
     "games": "nodemon ./scrapers/games.js",
