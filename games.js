@@ -23,7 +23,7 @@ const games = async () => {
     const result = await client
       .db('football')
       .collection('teams')
-      .find({ inState: true })
+      .find({ inState: true, teamId: 'Alcorncentral' })
 
     result.forEach(async doc => {
       const teamId = await doc.teamId
@@ -44,23 +44,66 @@ const games = async () => {
       $data.each(async (index, element) => {
         pageData.push($(element).children())
       })
+      console.log(`${teamId}`)
       for (let sec = 0; sec < sections; sec++) {
         for (let yr = 0; yr < 4; yr++) {
           const teamMascot = cleanText($(pageData[sec * 20 + 2][yr + 1]).text())
           if (teamMascot.length > 1) {
             const teamName = cleanText($(pageData[sec * 20 + 1][yr + 1]).text())
             const teamSeason = parseInt($(pageData[sec * 20][yr + 1]).text())
-            console.log(`${teamId}->${teamSeason}: ${teamName} ${teamMascot}`)
 
-            // TODO: Update seasons collection with this info
+            // console.log(`-> ${teamSeason}`)
+            for (let wk = 1; wk <= 16; wk++) {
+              const tm2Name = cleanText(
+                $(pageData[sec * 20 + 3 + wk][yr * 7 + 3]).text()
+              )
+              if (tm2Name.length > 1) {
+                const gameDate = new Date(
+                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 1]).text()
+                ).toDateString()
+                const gmLoc = $(pageData[sec * 20 + 3 + wk][yr * 7 + 2]).text()
+                const divisionGame =
+                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 4]).text() == '*'
+                const tm1Score = parseInt(
+                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 6]).text()
+                )
+                const tm2Score = parseInt(
+                  $(pageData[sec * 20 + 3 + wk][yr * 7 + 7]).text()
+                )
 
-            const tmSeasons = client
+                const gameInfo = {
+                  gameSeason: teamSeason,
+                  gameDate,
+                  gameWeek: wk,
+                  gameLocation: gmLoc == 'A' ? 'H' : gmLoc,
+                  divisionGame,
+                  playoffGame: !divisionGame && wk > 11,
+                  team1Id: gmLoc == 'A' ? '' : teamId,
+                  team1Name: gmLoc == 'A' ? tm2Name : teamName,
+                  team2Id: gmLoc == 'A' ? teamId : '',
+                  team2Name: gmLoc == 'A' ? teamName : tm2Name,
+                  team1Score: gmLoc == 'A' ? tm2Score : tm1Score,
+                  team2Score: gmLoc == 'A' ? tm1Score : tm2Score,
+                  tieGame: tm1Score == tm2Score,
+                  team1Win:
+                    gmLoc == 'A' ? tm2Score > tm1Score : tm1Score > tm2Score
+                }
+
+                console.log(gameInfo)
+              }
+              // console.log(`-> -> Week: ${wk}: ${gameDate} | ${gmLoc}`)
+            }
+
+            // Update seasons collection with this info
+            /*
+            client
               .db('football')
               .collection('seasons')
               .updateOne(
                 { teamId: teamId, teamSeason: teamSeason },
                 { $set: { teamName: teamName, teamMascot: teamMascot } }
               )
+              */
           }
         }
       }
