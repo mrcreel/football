@@ -7,9 +7,7 @@
     "games": "nodemon ./scrapers/games.js",
     "updateGames": "nodemon updateGames.js",
     "updateSeasons": "nodemon updateSeasons.js",
-    "inactive": "nodemon ./scrapers/inactiveTeams.js",
-    "seasons": "nodemon ./scrapers/seasons.js",
-    "active": "nodemon ./scrapers/activeTeams"
+    "seasons": "nodemon node ./scrapers/seasons.js --ignore ./scrapers/data"
   },
   "keywords": [],
   "author": "Michael R Creel",

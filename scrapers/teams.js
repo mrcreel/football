@@ -1,13 +1,10 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
 
-const fs = require('fs')
-
 require('dotenv').config()
 
-function cleanText(string) {
-  return string.replace(/(\r\n|\n|\r) /gm, '')
-}
+const writeJson = require('./functions/writeJson')
+const { cleanText } = require('./functions/helperFunctions')
 
 const pages = [
   'http://misshsfootball.com/Teams/index.htm',
@@ -56,13 +53,4 @@ const scrapePages = async pages => {
   writeJson(allData)
 }
 
-const writeJson = data => {
-  fs.writeFile('./scrapers/data/teams.json', JSON.stringify(data), err => {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log('Written')
-    }
-  })
-}
 scrapePages(pages)
