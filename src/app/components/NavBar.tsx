@@ -2,8 +2,8 @@ import Link from "next/link"
 
 const NavBar = () => {
   return (
-    <div>
-      <ul className='flex flex-row' id='navBarList'>
+    <div id='navBar' className='flex-row bg-slate-200 text-lg hidden lg:block'>
+      <ul className='flex flex-row p-2' id='navBarList'>
         <li>
           <Link
             href='/'
