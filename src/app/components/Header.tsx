@@ -17,7 +17,7 @@ const Header = () => {
         <div className='flex flex-row pl-1 justify-between align-middle'>
           <div id='logo' className='p-1 flex items-center justify-center'>
             <Link href='/'>
-              <Image src='/logo_md.png' alt='Logo' width={250} height={100} />
+              <Image src='/logo.png' alt='Logo' width={250} height={100} />
             </Link>
           </div>
 
@@ -78,7 +78,7 @@ const Header = () => {
           <form
             id='searchForm'
             action=''
-            className='flex flex-row h-10 p-1 mt-2 rounded-md border-2 border-slate-300 align-middle justify-between bg-white flex-grow '
+            className='flex flex-row h-10 px-1 lg:mt-4 mt-2 rounded-md border-2 border-slate-300 align-middle justify-between bg-white flex-grow '
           >
             <input
               type='text'
