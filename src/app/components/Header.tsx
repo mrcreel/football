@@ -3,8 +3,9 @@ import React, { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { GiHamburgerMenu } from "react-icons/gi"
-import { AiOutlineSearch } from "react-icons/ai"
+
 import SearchBar from "./SearchBar"
+import NavBar from "./NavBar"
 
 const Header = () => {
   const [isMenuVisible, setMenuVisible] = useState(false)
@@ -76,57 +77,12 @@ const Header = () => {
           </div>
         )}
         <SearchBar />
-
-        {/* <div id='search' className='flex-grow p-1'>
-          <form
-            id='searchForm'
-            action=''
-            className='flex flex-row h-10 px-1 lg:mt-4 mt-2 rounded-md border-2 border-slate-300 align-middle justify-between bg-white flex-grow '
-          >
-            <input
-              type='text'
-              name='searchInput'
-              id='searchInput'
-              required
-              placeholder='Search for a team, year, or conference'
-              className='h-8 text-lg align-middle flex-1 focus:outline-none'
-            />
-            <button type='submit' aria-label='searchButton'>
-              <AiOutlineSearch className=' h-8 w-8 ' />
-            </button>
-          </form>
-        </div>
-         */}
       </div>
       <div
         id='navBar'
         className='flex-row bg-slate-200 text-lg hidden lg:block p-1 pl-2'
       >
-        <ul className='flex flex-row' id='navBarList'>
-          <li>
-            <Link
-              href='/'
-              className='px-2 pl-0 hover:underline hover:underline-offset-1 '
-            >
-              Teams
-            </Link>
-          </li>
-          <li>
-            <Link className='px-2 hover:underline' href='/#'>
-              Seasons
-            </Link>
-          </li>
-          <li>
-            <Link className='px-2 hover:underline' href='/#'>
-              Conferences
-            </Link>
-          </li>
-          <li>
-            <Link className='px-2 hover:underline' href='/#'>
-              Leaders
-            </Link>
-          </li>
-        </ul>
+        <NavBar />
       </div>
     </div>
   )
