@@ -82,13 +82,13 @@ const Header = () => {
           >
             <input
               type='text'
-              name='search'
-              id='search'
+              name='searchInput'
+              id='searchInput'
               required
               placeholder='Search for a team, year, or conference'
               className='h-8 text-lg align-middle flex-1 focus:outline-none'
             />
-            <button type='submit'>
+            <button type='submit' aria-label='searchButton'>
               <AiOutlineSearch className=' h-8 w-8 ' />
             </button>
           </form>
