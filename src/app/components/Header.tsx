@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { GiHamburgerMenu } from "react-icons/gi"
 import { AiOutlineSearch } from "react-icons/ai"
+import SearchBar from "./SearchBar"
 
 const Header = () => {
   const [isMenuVisible, setMenuVisible] = useState(false)
@@ -74,7 +75,9 @@ const Header = () => {
             </ul>
           </div>
         )}
-        <div id='search' className='flex-grow m-1 p-1'>
+        <SearchBar />
+
+        {/* <div id='search' className='flex-grow p-1'>
           <form
             id='searchForm'
             action=''
@@ -93,10 +96,11 @@ const Header = () => {
             </button>
           </form>
         </div>
+         */}
       </div>
       <div
         id='navBar'
-        className='flex-row bg-slate-200 text-lg hidden lg:block'
+        className='flex-row bg-slate-200 text-lg hidden lg:block p-1 pl-2'
       >
         <ul className='flex flex-row' id='navBarList'>
           <li>

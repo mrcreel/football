@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className='p-2 m-2 min-h-screen border-2 border-green-500'>
+      <body className='m-2 min-h-screen bg-slate-100 border-2 border-green-500'>
         <Header />
         {children}
         <SpeedInsights />
