@@ -20,7 +20,12 @@ const Header = () => {
         <div className='flex flex-row pl-1 justify-between align-middle'>
           <div id='logo' className='p-1 flex items-center justify-center'>
             <Link href='/'>
-              <Image src='/logo.png' alt='Logo' width={250} height={100} />
+              <Image
+                src='/logo.png'
+                alt='JucoFootballArchive.com  Logo'
+                width={250}
+                height={100}
+              />
             </Link>
           </div>
           <BurgerMenu onClick={toggleMenu} />
