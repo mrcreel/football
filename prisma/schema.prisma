@@ -6,53 +6,55 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 
 model Division {
-  id                  String @id @default(uuid())
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
   name                String
   conferences         Conference[]
 }
 
 model Conference {
-  id                  String @id @default(uuid())
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
   name                String
   division            Division @relation(fields: [divisionId], references: [id])
-  divisionId          String
+  divisionId          String @db.ObjectId
   teams               Team[]
 }
 
-model HomeStadium {
-  id                  String @id @default(uuid())
-  teams               Team[]
-  name                String?
-  streetAddress       String?
-  City                String?
-  state               String?
-  latitude            Float?
-  longitude           Float?
+type Stadium {
+  name                String
+  streetAddress       String
+  City                String
+  state               String
+}
+
+type Schedule {
+    scheduleType        String
+    scheduleUrl         String
+    scheduleSinceYear   Int @default(2021)
+}
+
+type TeamColors {
+  primaryColor        String
+  secondaryColor      String
 }
 
 model Team {
-  id                  String @id @default(uuid())
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
   njcaaTeamId         String
   slug                String
-  logo                String?
-  njcaaName           String?
+  logo                String
+  njcaaName           String
   displayName         String
   mascot              String
-  scheduleType        String?
-  scheduleUrl         String?
-  scheduleSinceYear   Int? @default(2021)
-  homeStadium         HomeStadium? @relation(fields: [homeStadiumId], references: [id])
-  homeStadiumId       String?
+  schedule            Schedule
+  homeStadium         Stadium
   njcaaAliases        String[]
-  primaryColor        String?
-  secondaryColor      String?
-  conference          Conference? @relation(fields: [conferenceId], references: [id])
-  conferenceId        String?
+  teamColors          TeamColors
+  conference          Conference @relation(fields: [conferenceId], references: [id])
+  conferenceId        String  @db.ObjectId
 }

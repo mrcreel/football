@@ -1,17 +1,27 @@
-import { ApolloServer } from "@apollo/server"
-import { NextRequest } from "next/server"
-import { startServerAndCreateNextHandler } from "@as-integrations/next"
+import { createYoga } from "graphql-yoga"
+import SchemeBuilder from "@pothos/core"
+import PrismaPlugin from "@pothos/plugin-prisma"
 
-import { typeDefs } from "./typeDefs"
-import { resolvers } from "./resolvers"
+import PrismaTypes from "@pothos/plugin-prisma/generated"
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers })
+import prisma from "@/app/lib/prisma"
 
-const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer)
+const builder = new SchemeBuilder<{
+  PrismaTypes: PrismaTypes
+}>({
+  plugins: [PrismaPlugin],
+  prisma: {
+    client: prisma,
+  },
+})
 
-export const GET = async (request: NextRequest) => {
-  return handler(request)
-}
-export const POST = async (request: NextRequest) => {
-  return handler(request)
-}
+builder.queryType({})
+builder.mutationType({})
+
+builder.prismaObject("Division", {
+  fields: (t) => ({
+    id: t.exposeID("id"),
+    name: t.exposeString("name"),
+    conferences: t.relation("conferences"),
+  }),
+})
