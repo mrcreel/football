@@ -38,3 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## Temp Logo
 
 https://app.logo.com/dashboard/logo-resizer
+
+## Full Stack Tutorial
+
+https://github.com/prisma/prisma-examples/blob/latest/typescript/graphql-nextjs/README.md
