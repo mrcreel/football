@@ -1,7 +1,20 @@
 import { PrismaClient } from "@prisma/client"
+import { ImFileZip } from "react-icons/im"
 
-const prisma = new PrismaClient({
-  log: ["warn", "error", "query"],
-})
+let prisma: PrismaClient
+
+declare global {
+  var prisma: PrismaClient
+}
+
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient()
+} else {
+  if (!global.prisma) {
+    global.prisma = new PrismaClient()
+  }
+
+  prisma = global.prisma
+}
 
 export default prisma
