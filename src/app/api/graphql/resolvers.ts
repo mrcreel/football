@@ -15,8 +15,6 @@ export const resolvers = {
       const newDivision = await prisma.division.create({
         data: {
           name: args.name,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       })
       return newDivision
@@ -24,7 +22,7 @@ export const resolvers = {
     updateDivision: async (_: never, args: { id: string; name: string }) => {
       const updatedDivision = await prisma.division.update({
         where: { id: args.id },
-        data: { name: args.name, updatedAt: new Date() },
+        data: { name: args.name },
       })
       return updatedDivision
     },
