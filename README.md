@@ -46,3 +46,4 @@ https://github.com/prisma/prisma-examples/blob/latest/typescript/graphql-nextjs/
 ## Helpful video
 
 https://www.youtube.com/watch?v=nERpb57brK0
+.
