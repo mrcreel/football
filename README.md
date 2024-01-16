@@ -42,3 +42,7 @@ https://app.logo.com/dashboard/logo-resizer
 ## Full Stack Tutorial
 
 https://github.com/prisma/prisma-examples/blob/latest/typescript/graphql-nextjs/README.md
+
+## Helpful video
+
+https://www.youtube.com/watch?v=nERpb57brK0
