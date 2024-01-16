@@ -10,7 +10,23 @@ const NavMenu = () => {
         <li>
           <Link
             className='border-b-2 border-slate-400 hover:underline'
-            href='/#'
+            href='/divisions'
+          >
+            Divisions
+          </Link>
+        </li>
+        <li>
+          <Link
+            className='border-b-2 border-slate-400 hover:underline'
+            href='/conferences'
+          >
+            Conferences
+          </Link>
+        </li>
+        <li>
+          <Link
+            className='border-b-2 border-slate-400 hover:underline'
+            href='/teams'
           >
             Teams
           </Link>
@@ -23,14 +39,7 @@ const NavMenu = () => {
             Seasons
           </Link>
         </li>
-        <li>
-          <Link
-            className='border-b-2 border-slate-400 hover:underline'
-            href='/#'
-          >
-            Conferences
-          </Link>
-        </li>
+
         <li>
           <Link
             className='border-b-2 border-slate-400 hover:underline'

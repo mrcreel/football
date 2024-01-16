@@ -5,56 +5,60 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-
 model Division {
-  id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  conferences         Conference[]
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  conferences Conference[]
 }
 
 model Conference {
-  id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  division            Division @relation(fields: [divisionId], references: [id])
-  divisionId          String @db.ObjectId
-  teams               Team[]
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  division   Division @relation(fields: [divisionId], references: [id])
+  divisionId String   @db.ObjectId
+  teams      Team[]
 }
 
 type Stadium {
-  name                String
-  streetAddress       String
-  City                String
-  state               String
+  name          String
+  streetAddress String
+  City          String
+  state         String
 }
 
 type Schedule {
-    scheduleType        String
-    scheduleUrl         String
-    scheduleSinceYear   Int @default(2021)
+  scheduleType      String
+  scheduleUrl       String
+  scheduleSinceYear Int    @default(2021)
 }
 
 type TeamColors {
-  primaryColor        String
-  secondaryColor      String
+  primaryColor   String
+  secondaryColor String
 }
 
 model Team {
-  id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  njcaaTeamId         String
-  slug                String
-  logo                String
-  njcaaName           String
-  displayName         String
-  mascot              String
-  schedule            Schedule
-  homeStadium         Stadium
-  njcaaAliases        String[]
-  teamColors          TeamColors
-  conference          Conference @relation(fields: [conferenceId], references: [id])
-  conferenceId        String  @db.ObjectId
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  njcaaTeamId  String
+  slug         String
+  logo         String
+  njcaaName    String
+  displayName  String
+  mascot       String
+  schedule     Schedule
+  stadium      Stadium
+  njcaaAliases String[]
+  teamColors   TeamColors
+  conference   Conference @relation(fields: [conferenceId], references: [id])
+  conferenceId String     @db.ObjectId
+  njcaaRegion  Int
 }
